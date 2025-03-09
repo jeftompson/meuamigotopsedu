@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Cyberpunk</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #121212;
+      color: #fff;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+      color: #00e0ff;
+    }
+
+    #nickname-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    #nickname-input {
+      padding: 12px 20px;
+      margin: 10px;
+      border-radius: 8px;
+      border: 2px solid #444;
+      background-color: #222;
+      color: #fff;
+      font-size: 18px;
+      width: 250px;
+    }
+
+    button {
+      padding: 10px 20px;
+      border-radius: 25px;
+      background-color: #00e0ff;
+      color: #121212;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      margin-top: 10px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #007f99;
+    }
+
+	/* Opções */
+	.option {
+	  background-color: #333;
+	  padding: 10px;
+	  margin: 10px;
+	  border-radius: 5px;
+	  cursor: pointer;
+	  transition: background-color 0.3s;
+	}
+
+	/* Hover nos botões */
+	.option:hover {
+	  background-color: #9b59b6; /* Roxo suave */
+	}
+
+	/* Quando a resposta for correta */
+	.correct {
+	  background-color: #36eaa4; /* Verde */
+	  border: 2px solid #444;
+	}
+
+	/* Quando a resposta for incorreta */
+	.incorrect {
+	  background-color: #e74c3c; /* Vermelho */
+	  border: 2px solid #444;
+	}
+
+    #quiz-container, #score-container, #explanation-box {
+      display: none;
+      width: 80%;
+      margin: 20px auto;
+      border-radius: 15px;
+      background-color: #1a1a1a;
+      padding: 20px;
+      border: 2px solid #444;
+    }
+
+    #explanation-box {
+      background-color: #222;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      width: 50%;
+    }
+
+    #close-btn {
+      position: absolute;
+      top: 0px;
+      right: 2px;
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      padding: 12px 14px;
+      border-radius: 50%;
+      font-size: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    #close-btn:hover {
+      background-color: #ff3e3e;
+      transform: scale(1.1);
+    }
+
+    #close-btn:focus {
+      outline: none;
+    }
+
+    .timer {
+      font-size: 20px;
+      margin-top: 15px;
+    }
+
+    #progress-bar {
+      width: 80%;
+      height: 10px;
+      background-color: #444;
+      border-radius: 5px;
+      margin-top: 20px;
+      overflow: hidden;
+      margin: 20px auto;
+    }
+
+    #progress-bar-inner {
+      height: 100%;
+      width: 100%;
+      background-color: #fcbf36;
+      transition: width 1s linear;
+    }
+
+    .confetti-container {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    #score-container {
+      background-color: #222;
+      padding: 20px;
+      border-radius: 15px;
+    }
+
+    #quiz-container {
+      background-color: #1a1a1a;
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    #header-container p {
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+
+
+  <h1>Meu Amigo Tops QUIZ</h1>
+
+  <!-- Entrada do Apelido -->
+  <div id="nickname-container">
+    <input type="text" id="nickname-input" placeholder="Digite seu apelido" />
+    <button onclick="setNickname()">Começar</button>
+  </div>
+
+  <!-- Cabeçalho -->
+  <div id="header-container">
+    <p>Jogador: <span id="username"></span></p>
+    <p>Pontos: <span id="quiz-score">0</span></p>
+    <p class="timer" id="timer">00:30</p>
+  </div>
+
+  <!-- Barra de Progresso -->
+  <div id="progress-bar">
+    <div id="progress-bar-inner"></div>
+  </div>
+
+  <!-- Quiz -->
+  <div id="quiz-container">
+    <p id="question"></p>
+    <div id="options-container"></div>
+  </div>
+
+  <!-- Caixa de Explicação -->
+  <div id="explanation-box">
+    <p id="explanation-content"></p>
+    <button id="close-btn" onclick="closeExplanation()">X</button>
+  </div>
+
+  <!-- Resultado -->
+  <div id="score-container">
+    <p>Você acertou <span id="final-score">0</span> questões!</p>
+    <button onclick="restartQuiz()">Reiniciar</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti"></script>
+  <script>
+    const questions = [
+      {
+        question: "A capital do estado da Paraíba é João Pessoa.",
+        options: ["CERTO", "ERRADO"],
+        answer: 0,
+        explanation: "Sim, a capital do estado da Paraíba é João Pessoa."
+      },
+      {
+        question: "Campina Grande é a cidade mais populosa da Paraíba.",
+        options: ["CERTO", "ERRADO"],
+        answer: 1,
+        explanation: "João Pessoa é a cidade mais populosa da Paraíba."
+      }
+    ];
+
+    let currentQuestionIndex = 0;
+    let quizScore = 0;
+    let userName = localStorage.getItem("nickname");
+    let timerCount = 30;
+    let timerInterval;
+    let hasAnswered = false;
+
+    if (!userName) {
+      document.getElementById('nickname-container').style.display = 'block';
+    } else {
+      document.getElementById('username').textContent = userName;
+      startQuiz();
+    }
+
+    function setNickname() {
+      const nickname = document.getElementById('nickname-input').value;
+      if (nickname) {
+        userName = nickname;
+        localStorage.setItem("nickname", nickname);
+        document.getElementById('nickname-container').style.display = 'none';
+        document.getElementById('username').textContent = nickname;
+        startQuiz();
+      }
+    }
+
+    function startQuiz() {
+      loadQuestion();
+      document.getElementById('quiz-container').style.display = 'block';
+    }
+
+    function loadQuestion() {
+      const question = questions[currentQuestionIndex];
+      document.getElementById('question').textContent = question.question;
+      const optionsContainer = document.getElementById('options-container');
+      optionsContainer.innerHTML = '';
+
+      question.options.forEach((option, index) => {
+        const optionElement = document.createElement('div');
+        optionElement.classList.add('option');
+        optionElement.textContent = option;
+        optionElement.onclick = () => checkAnswer(index);
+        optionsContainer.appendChild(optionElement);
+      });
+
+      document.getElementById('explanation-box').style.display = 'none';
+
+      timerCount = 30;
+      document.getElementById('timer').textContent = `00:${timerCount < 10 ? '0' + timerCount : timerCount}`;
+      document.getElementById('progress-bar-inner').style.width = "100%";
+      startTimer();
+      hasAnswered = false;
+    }
+
+    function startTimer() {
+      clearInterval(timerInterval);
+
+      timerInterval = setInterval(() => {
+        if (timerCount <= 0) {
+          clearInterval(timerInterval);
+          nextQuestion();
+        } else {
+          timerCount--;
+          document.getElementById('timer').textContent = `00:${timerCount < 10 ? '0' + timerCount : timerCount}`;
+          const progress = (timerCount / 30) * 100;
+          document.getElementById('progress-bar-inner').style.width = progress + '%';
+        }
+      }, 1000);
+    }
+
+	function checkAnswer(selectedIndex) {
+	  if (hasAnswered) return;
+	  hasAnswered = true;
+
+	  clearInterval(timerInterval);
+
+	  const correctAnswer = questions[currentQuestionIndex].answer;
+	  const explanation = questions[currentQuestionIndex].explanation;
+
+	  const options = document.querySelectorAll('.option');
+	  
+	  // Adiciona a classe para a opção correta
+	  if (selectedIndex === correctAnswer) {
+		options[selectedIndex].classList.add('correct');
+		quizScore++;
+		updateScore();
+		showConfetti();
+		nextQuestion();
+	  } else {
+		// Adiciona a classe para a opção incorreta
+		options[selectedIndex].classList.add('incorrect');
+		showExplanation(explanation);
+	  }
+
+	  // Desabilita todas as opções para não permitir múltiplos cliques
+	  options.forEach(option => {
+		option.style.pointerEvents = 'none';
+	  });
+	}
+
+    function showExplanation(explanation) {
+      document.getElementById('explanation-content').textContent = explanation;
+      document.getElementById('explanation-box').style.display = 'block';
+      clearInterval(timerInterval);
+    }
+
+    function closeExplanation() {
+      document.getElementById('explanation-box').style.display = 'none';
+      nextQuestion();
+    }
+
+    function updateScore() {
+      document.getElementById('quiz-score').textContent = quizScore;
+    }
+
+    function showConfetti() {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < questions.length) {
+        loadQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function finishQuiz() {
+      document.getElementById('quiz-container').style.display = 'none';
+      document.getElementById('score-container').style.display = 'block';
+      document.getElementById('final-score').textContent = quizScore;
+    }
+
+    function restartQuiz() {
+      currentQuestionIndex = 0;
+      quizScore = 0;
+      updateScore();
+      loadQuestion();
+      document.getElementById('score-container').style.display = 'none';
+      document.getElementById('quiz-container').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
