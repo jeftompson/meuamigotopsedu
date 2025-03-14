@@ -30,7 +30,7 @@
 		}
 
 		.header-logo {
-			height: 50px;
+			height: 70px;
 			width: auto;
 		}
 
@@ -43,26 +43,7 @@
 			padding: 5px 8px;
 			border-radius: 5px;
 		}
-
-		@media (max-width: 600px) {
-			.header-container {
-				padding: 5px 10px;
-			}
-
-			.header-title {
-				font-size: 14px;
-			}
-
-			.header-logo {
-				height: 25px;
-			}
-
-			.btn {
-				padding: 4px 6px;
-				font-size: 12px;
-			}
-		}
-
+		
         .editor-container {
             width: 90%;
             background: #1e1e1e;
@@ -110,7 +91,6 @@
             background-color: #333;
             color: white;
             text-align: center;
-            min-width: 150px;
             height: 100%;
             cursor: grab;
         }
@@ -156,7 +136,7 @@
         }
 
         .add-icons {
-            font-size: 30pt;
+            font-size: 25pt;
         }
 
         .row-container:hover .delete-btn,
@@ -188,13 +168,12 @@
             cursor: pointer;
             border: 2px solid #fff;
         }
-
+		
         .font-controls {
             display: flex;
             justify-content: center;
 			flex-wrap: wrap;
             gap: 10px;
-            margin-top: 10px;
         }
 		
 		/* Fundo escuro do modal */
@@ -244,6 +223,21 @@
 				max-height: 85vh; /* Permite mais espaço para o conteúdo */
 				padding: 15px;
 			}
+			.header-title {
+				font-size: 14px;
+			}
+
+			.header-logo {
+				height: 50px;
+			}
+
+			.btn {
+				padding: 4px 4px;
+				font-size: 12px;
+			}
+			.add-icons {
+				font-size: 20pt;
+			}
 		}
 
 
@@ -260,12 +254,13 @@
 <body>
     <header class="header-container">
     <img src="logo.png" alt="Logo" class="header-logo" />
+
     <div class="font-controls">
-        <button class="btn btn-secondary" onclick="changeFontSize(2)">A+</button>
-        <button class="btn btn-secondary" onclick="changeFontSize(-2)">A-</button>
+        <button class="btn btn-secondary" onclick="changeFontSize(2)"><i class="material-icons add-icons">text_increase</i></button>
+        <button class="btn btn-secondary" onclick="changeFontSize(-2)"><i class="material-icons add-icons">text_decrease</i></button>
     </div>
     <button class="btn btn-info help-btn" onclick="openTutorial()">
-        <i class="material-icons">help_outline</i>
+        <i class="material-icons add-icons">help_outline</i>
     </button>
 	</header>
 
@@ -298,13 +293,13 @@
     <div class="editor-container" id="editorContainer"></div>
 
     <div class="controls">
-        <button class="btn btn-primary" onclick="addRow()"><i class="material-icons add-icons">view_agenda</i></button>
+        <button class="btn btn-primary" onclick="addRow()"><i class="material-icons add-icons">table_rows</i></button>
         <button class="btn btn-secondary" onclick="addColumn()"><i class="material-icons add-icons">view_column</i></button>
-        <button class="btn btn-info" onclick="addBlock('title')">Título</button>
-        <button class="btn btn-success" onclick="addBlock('text')">Texto</button>
-        <button class="btn btn-warning" onclick="addBlock('list')">Lista</button>
-        <button class="btn btn-danger" onclick="addBlock('quote')">Imagem</button>
-        <button class="btn btn-light" onclick="downloadImage()"><i class="material-icons">download_for_offline</i></button>
+        <button class="btn btn-info" onclick="addBlock('title')"><i class="material-icons add-icons">title</i></button>
+        <button class="btn btn-success" onclick="addBlock('text')"><i class="material-icons add-icons">text_fields</i></button>
+        <button class="btn btn-warning" onclick="addBlock('list')"><i class="material-icons add-icons">format_list_bulleted</i></button>
+        <button class="btn btn-danger" onclick="addBlock('quote')"><i class="material-icons add-icons">image</i></button>
+        <button class="btn btn-light" onclick="downloadImage()"><i class="material-icons add-icons">download_for_offline</i></button>
     </div>
 
     <div class="color-picker">
@@ -328,6 +323,7 @@
             row.classList.add("row-container");
             row.innerHTML = `<button class='delete-btn' onclick='this.parentElement.remove()'>x</button>`;
             container.appendChild(row);
+			addColumn();
         }
 
         function addColumn() {
@@ -396,11 +392,6 @@
 							img.style.height = "auto"; // Mantém a proporção original
 							img.style.borderRadius = "5px";
 							img.style.display = "block"; // Garante que a imagem respeite margens
-
-							// Aguarda a imagem carregar antes de ajustar a altura do bloco
-							img.onload = function () {
-								block.style.height = img.naturalHeight + "px"; // Define a altura real da imagem
-							};
 
 							// Ajustando dinamicamente o tamanho do bloco
 							block.innerHTML = "";
