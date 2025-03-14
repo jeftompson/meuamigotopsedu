@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Orbitron', sans-serif;
+    background-color: black;
+    color: #00ff00;
+    text-align: center;
+    overflow-x: hidden;
+}
+
+#matrix {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+header {
+    position: relative;
+    padding: 20px;
+    text-align: center;
+    z-index: 10;
+}
+
+header img {
+    width: 120px;
+    height: auto;
+    filter: drop-shadow(0 0 10px #00ff00);
+    animation: glitch-intense 10s infinite;
+    position: relative;
+}
+
+@keyframes glitch-intense {
+    0% { opacity: 1; transform: none; }
+    10% { opacity: 0.8;}
+    20% { opacity: 0.6;}
+    50% { opacity: 0; transform: none; }
+    70% { opacity: 0.6;}
+    80% { opacity: 0.8;}
+    90% { opacity: 1; transform: none; }
+    100% { opacity: 1; transform: none; }
+}
+
+/* Painel Holográfico */
+.hologram-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    gap: 30px;
+}
+
+@media screen and (max-width: 768px) {
+    .hologram-container {
+        flex-direction: column;
+        align-items: center;
+        margin-top: 60px;
+    }
+
+    .hologram {
+        width: 90%;
+        margin-bottom: 20px;
+    }
+}
+
+.hologram {
+    width: 280px;
+    height: 200px;
+    padding: 20px;
+    border-radius: 10px;
+    background: rgba(0, 255, 0, 0.1);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(0, 255, 0, 0.3);
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
+    text-align: center;
+    animation: float 3s infinite ease-in-out alternate;
+}
+
+.hologram-center {
+    width: 320px;
+    height: 220px;
+}
+
+.hologram h1, .hologram h2 {
+    color: #00ff00;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px #00ff00;
+}
+
+.hologram p {
+    font-size: 1rem;
+    color: #00cc00;
+}
+
+.btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: black;
+    background-color: #00ff00;
+    border: 2px solid #00ff00;
+    border-radius: 5px;
+    box-shadow: 0 0 10px #00ff00;
+    transition: 0.3s;
+    font-weight: bold;
+}
+
+.btn:hover {
+    background-color: black;
+    color: #00ff00;
+    transform: scale(1.1);
+}
+
+@keyframes float {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(10px); }
+}
