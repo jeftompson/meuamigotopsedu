@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>Meu Amigo Tops QUIZ</title>
+
+	<script src="https://cdn.jsdelivr.net/npm/canvas-confetti"></script>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="stylesheet" href="styles.css">
+	<script src="script.js" defer></script>
+</head>
+<body>
+
+  <!-- Tela de entrada do apelido -->
+  <div id="nickname-container">
+    <p>Total de questões: <strong id="total-questions"></strong></p>
+    <input type="text" id="nickname-input" placeholder="Digite seu apelido" />
+    <button onclick="setNickname()">Confirmar Apelido</button>
+  </div>
+
+  <!-- Tela de boas-vindas -->
+  <div id="welcome-container">
+    <h2>Bem-vindo, <span id="display-nickname"></span>!</h2>
+    <p>Total de questões: <strong id="quiz-total-questions"></strong></p>
+    <p>Melhor pontuação: <strong id="best-score">0</strong></p>
+    <button onclick="startQuiz()">COMEÇAR</button>
+
+    <!-- Histórico de pontuação -->
+    <h3>Histórico de respostas</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Pontuação</th>
+          <th>Data/Hora</th>
+        </tr>
+      </thead>
+      <tbody id="score-history"></tbody>
+    </table>
+  <button onclick="resetLocalStorage()">APAGAR DADOS</button>
+  </div>
+  
+
+  <!-- Quiz Container -->
+  <div id="quiz-container">
+    <!-- Cabeçalho -->
+    <div id="header-container">
+      <img id="logo" src="logo.png" alt="Logo">
+      <div id="score-container">
+        <i class="material-icons">emoji_events</i>
+        <p><span id="quiz-score">0</span></p>
+      </div>
+      <!-- Timer Container -->
+      <div id="timer-container">
+        <div id="timer-circle">
+          <svg width="90" height="90" style="overflow:visible;">
+            <circle id="circle-bg" cx="45" cy="45" r="30"></circle>
+            <circle id="circle-progress" cx="45" cy="45" r="30"></circle>
+          </svg>
+        </div>
+        <i class="material-icons" id="timer-icon" style="z-index:1;">timer</i>
+        <p id="timer-text-display" style="z-index:1; margin:0;">60s</p>
+      </div>
+    </div>
+
+    <p id="question"></p>
+    <div id="explanation-box">
+      <p id="explanation-text"></p>
+    </div>
+    <div id="options-container"></div>
+    <button id="next-btn" onclick="nextQuestion()">Próxima</button>
+    <div id="question-counter"></div>
+    <div id="progress-bar">
+      <div id="progress-bar-inner"></div>
+    </div>
+    <h4>Assunto do Quiz que deve ser breve</h4>
+  </div>
+
+  <!-- Tela Final -->
+  <div id="result-container">
+    <h2>Resultado</h2>
+    <p><strong id="user-name"></strong>, você acertou <strong><span id="final-score">0</span></strong> de <span id="total-questions-final"></span>!</p>
+    <h3>Revisão das Perguntas:</h3>
+    <ul id="review-list"></ul>
+    <button onclick="restartQuiz()">Reiniciar</button>
+    <img src="logo.png" alt="Logo" class="footer-logo" />
+  </div>
+
+  <script>
+    /* ==============================
+       Variáveis e Configurações Iniciais
+       ============================== */
+    const TOTAL_TIME = 60;  // Tempo total para cada pergunta
+    let questions = [
+      {
+        question: "A capital da Paraíba é João Pessoa.",
+        options: ["CERTO", "ERRADO"],
+        answer: 0,
+        explanation: "Sim, João Pessoa é a capital da Paraíba."
+      },
+      {
+        question: "Campina Grande é a cidade mais populosa da Paraíba.",
+        options: ["CERTO", "ERRADO"],
+        answer: 1,
+        explanation: "João Pessoa é a cidade mais populosa."
+      },
+      {
+        question: "O Brasil possui 5 regiões.",
+        options: ["CERTO", "ERRADO"],
+        answer: 0,
+        explanation: "Sim, o Brasil tem 5 regiões."
+      },
+      {
+        question: "O Brasil não é um país considerado continental devido ao seu tamanho enorme.",
+        options: ["CERTO", "ERRADO"],
+        answer: 1,
+        explanation: "O Brasil é sim considerado um país continental por sua extensão."
+      }
+    ];
+	
+	/* ==============================
+       Sons do QUIZ
+       ============================== */
+	const soundCorrect = new Audio("Sons/correct.mp3");
+	const soundWrong = new Audio("Sons/wrong.mp3");
+	const soundWin = new Audio("Sons/win.mp3");
+
+    // Variáveis do quiz
+    let currentQuestionIndex = 0;
+    let quizScore = 0;
+    let userName = "";
+    let userAnswers = [];
+
+    // Variáveis do timer circular
+    let timerInterval = null;
+    let timeLeft = TOTAL_TIME;
+    const radius = 30;
+    const circumference = 2 * Math.PI * radius;
+    let circleProgress = null; 
+
+    // Exibir total de questões (usando o tamanho do array de perguntas)
+    document.getElementById('total-questions').textContent = questions.length;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      circleProgress = document.getElementById('circle-progress');
+      circleProgress.style.strokeDasharray = circumference;
+      circleProgress.style.strokeDashoffset = 0;
+    });
+
+    /* ==============================
+       Funções de Gerenciamento de Apelido e Tela Inicial
+       ============================== */
+    function setNickname() {
+      let nicknameInput = document.getElementById('nickname-input').value.trim();
+      if (nicknameInput) {
+        localStorage.setItem('nickname', nicknameInput);
+        userName = nicknameInput;
+        showWelcomeScreen();
+      }
+    }
+
+    function showWelcomeScreen() {
+      userName = localStorage.getItem('nickname');
+      let bestScore = localStorage.getItem('bestScore') || 0;
+      let history = JSON.parse(localStorage.getItem('quizHistory')) || [];
+      
+      document.getElementById('nickname-container').style.display = 'none';
+      document.getElementById('welcome-container').style.display = 'flex';
+      document.getElementById('display-nickname').textContent = userName;
+      document.getElementById('quiz-total-questions').textContent = questions.length;
+      document.getElementById('best-score').textContent = bestScore;
+
+      let historyTable = document.getElementById('score-history');
+      historyTable.innerHTML = "";
+      history.forEach(entry => {
+        let row = `<tr><td>${entry.score}</td><td>${entry.date}</td></tr>`;
+        historyTable.innerHTML += row;
+      });
+    }
+
+    function startQuiz() {
+      document.getElementById('welcome-container').style.display = 'none';
+      document.getElementById('quiz-container').style.display = 'block';
+      // Reinicia variáveis do quiz
+      currentQuestionIndex = 0;
+      quizScore = 0;
+      userAnswers = [];
+      questions = shuffleArray(questions);
+      document.getElementById('quiz-score').textContent = quizScore;
+      loadQuestion();
+    }
+
+    /* ==============================
+       Funções do Quiz
+       ============================== */
+    function shuffleArray(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
+
+    function loadQuestion() {
+      resetTimer();
+      updateProgress();
+      document.getElementById('explanation-box').style.display = 'none';
+      document.getElementById('next-btn').style.display = 'none';
+
+      const questionData = questions[currentQuestionIndex];
+      document.getElementById('question').textContent = questionData.question;
+      document.getElementById('question-counter').textContent =
+        `Questão ${currentQuestionIndex + 1} / ${questions.length}`;
+
+      const optionsContainer = document.getElementById('options-container');
+      optionsContainer.innerHTML = '';
+
+      questionData.options.forEach((optionText, index) => {
+        const optionElement = document.createElement('div');
+        optionElement.classList.add('option');
+        optionElement.innerHTML = `
+          <span>${optionText}</span>
+          <i class="material-icons option-icon"></i>
+        `;
+        optionElement.onclick = () => checkAnswer(index, optionElement);
+        optionsContainer.appendChild(optionElement);
+      });
+    }
+
+    function checkAnswer(selectedIndex, optionElement) {
+      clearInterval(timerInterval);
+      const questionData = questions[currentQuestionIndex];
+      const isCorrect = (selectedIndex === questionData.answer);
+
+      optionElement.classList.add(isCorrect ? 'correct' : 'incorrect');
+      const iconEl = optionElement.querySelector('.option-icon');
+      iconEl.textContent = isCorrect ? 'check_circle' : 'cancel';
+
+      if (isCorrect) {
+        quizScore++;
+        document.getElementById('quiz-score').textContent = quizScore;
+		soundCorrect.play(); // Som de acerto
+        confetti();
+      } else {
+		soundWrong.play(); // Som final do QUIZ
+      }
+
+      document.getElementById('explanation-box').style.display = 'block';
+      document.getElementById('explanation-text').textContent = questionData.explanation;
+
+      userAnswers.push({
+        question: questionData.question,
+        userAnswer: questionData.options[selectedIndex],
+        correctAnswer: questionData.options[questionData.answer],
+        explanation: questionData.explanation,
+        isCorrect
+      });
+
+      const options = document.querySelectorAll('.option');
+      options.forEach(opt => opt.style.pointerEvents = 'none');
+
+      document.getElementById('next-btn').style.display = 'inline-block';
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < questions.length) {
+        loadQuestion();
+      } else {
+        finishQuiz();
+		soundWin.play(); // Som final do QUIZ
+      }
+    }
+
+    function finishQuiz() {
+      clearInterval(timerInterval);
+      document.getElementById('quiz-container').style.display = 'none';
+      document.getElementById('result-container').style.display = 'block';
+      document.getElementById('user-name').textContent = userName;
+      document.getElementById('final-score').textContent = quizScore;
+      document.getElementById('total-questions-final').textContent = questions.length;
+
+      const reviewList = document.getElementById('review-list');
+      reviewList.innerHTML = '';
+      userAnswers.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.classList.add(item.isCorrect ? 'review-correct' : 'review-incorrect');
+        li.innerHTML = `
+          <strong>Questão ${index + 1}:</strong> ${item.question}<br/>
+          <strong>Sua resposta:</strong> ${item.userAnswer}<br/>
+          <strong>Resposta correta:</strong> ${item.correctAnswer}<br/>
+          <em>Explicação:</em> ${item.explanation}
+        `;
+        reviewList.appendChild(li);
+      });
+
+      // Atualiza a melhor pontuação e o histórico no localStorage
+      let storedBest = parseInt(localStorage.getItem('bestScore')) || 0;
+      if (quizScore > storedBest) {
+        localStorage.setItem('bestScore', quizScore);
+      }
+      let history = JSON.parse(localStorage.getItem('quizHistory')) || [];
+      history.push({ score: quizScore, date: new Date().toLocaleString() });
+      localStorage.setItem('quizHistory', JSON.stringify(history));
+    }
+
+    function restartQuiz() {
+      document.getElementById('result-container').style.display = 'none';
+      showWelcomeScreen();
+    }
+
+    function updateProgress() {
+      const questionNumber = currentQuestionIndex + 1;
+      const progress = (questionNumber / questions.length) * 100;
+      document.getElementById('progress-bar-inner').style.width = `${progress}%`;
+    }
+
+    /* Timer */
+    function resetTimer() {
+      clearInterval(timerInterval);
+      timeLeft = TOTAL_TIME;
+      updateCircle(1.0);
+      document.getElementById('timer-text-display').textContent = `${TOTAL_TIME}s`;
+
+      timerInterval = setInterval(() => {
+        if (timeLeft > 0) {
+          timeLeft--;
+          document.getElementById('timer-text-display').textContent = `${timeLeft}s`;
+          const fraction = timeLeft / TOTAL_TIME;
+          updateCircle(fraction);
+        } else {
+          document.getElementById('timer-text-display').textContent = '0s';
+          updateCircle(0);
+          clearInterval(timerInterval);
+          autoMarkWrong();
+        }
+      }, 1000);
+    }
+
+    function updateCircle(fraction) {
+      if (!circleProgress) return; 
+      const dashoffset = circumference * (1 - fraction);
+      circleProgress.style.strokeDashoffset = dashoffset;
+    }
+
+    function autoMarkWrong() {
+      const hasClicked = userAnswers.length > currentQuestionIndex;
+      if (hasClicked) return;
+      const questionData = questions[currentQuestionIndex];
+      const options = document.querySelectorAll('.option');
+      if (options.length > 0) {
+        options[0].classList.add('incorrect');
+        const iconEl = options[0].querySelector('.option-icon');
+        iconEl.textContent = 'cancel';
+        document.getElementById('explanation-box').style.display = 'block';
+        document.getElementById('explanation-text').textContent = questionData.explanation;
+        userAnswers.push({
+          question: questionData.question,
+          userAnswer: questionData.options[0],
+          correctAnswer: questionData.options[questionData.answer],
+          explanation: questionData.explanation,
+          isCorrect: false
+        });
+        options.forEach(opt => opt.style.pointerEvents = 'none');
+        document.getElementById('next-btn').style.display = 'inline-block';
+      }
+    }
+
+    // Se já existe um apelido salvo, mostra a tela de boas-vindas
+    if (localStorage.getItem('nickname')) {
+      showWelcomeScreen();
+    }
+	
+	// Resetar o progresso
+	function resetLocalStorage() {
+	  if (confirm("Tem certeza que deseja apagar todos os seus dados gravados? Isso não pode ser desfeito!")) {
+		localStorage.clear(); // Remove todos os dados
+		alert("Dados apagados! A página será recarregada.");
+		location.reload(); // Recarrega a página para aplicar as mudanças
+	  }
+	}
+  </script>
+</body>
+</html>
