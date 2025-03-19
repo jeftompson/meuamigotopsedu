@@ -1,0 +1,269 @@
+	body {
+		font-family: 'Arial', sans-serif;
+		background-color: #121212;
+		color: #fff;
+		text-align: center;
+		margin: 0;
+		padding: 10px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+	
+	#floating-menu {
+		position: fixed;
+		top: 20px;
+		left: 50%;
+		transform: translateX(-50%);
+		background: rgba(30, 30, 30, 0.9);
+		padding: 10px;
+		border-radius: 10px;
+		display: flex;
+		gap: 8px;
+		box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+		z-index: 1000;
+		transition: opacity 0.3s ease-in-out;
+	}
+
+	#floating-menu button {
+		padding: 8px;
+		background: #222;
+		color: white;
+		border: none;
+		cursor: pointer;
+		border-radius: 5px;
+		transition: background 0.3s ease;
+	}
+
+	#floating-menu button:hover {
+		background: #444;
+	}
+
+	.footer-container {
+		display: flex;
+		align-items: center;
+		justify-content: space-around;
+		padding: 8px 15px;
+		width: 100%;
+		height: 80px;
+	}
+
+	.footer-logo {
+		height: 70px;
+		width: auto;
+	}
+
+	.font-controls {
+		display: flex;
+		gap: 5px;
+	}
+
+	.help-btn {
+		padding: 5px 8px;
+		border-radius: 5px;
+	}
+	
+	.editor-container {
+		width: 100%;
+		margin-top: 80px;
+		background: #1e1e1e;
+		padding: 5px;
+		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+		color: #fff;
+		position: relative;
+		min-height: 100px;
+	}
+
+	.row-container,
+	.column-container,
+	.block {
+		position: relative;
+	}
+
+	.row-container {
+		display: flex;
+		flex-direction: row;
+		gap: 5px;
+		background-color: #181818;
+		padding: 5px;
+		justify-content: space-between;
+	}
+
+	.column-container {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		background-color: #121212;
+		min-height: 50px;
+		width: 100%;
+	}
+
+	.block {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 5px;
+		margin: 5px;
+		background-color: #333;
+		color: white;
+		height: 100%;
+		cursor: grab;
+	}
+
+	.titulo {
+		margin-top: 0;
+		margin-bottom: .0rem;
+		font-weight: 700;
+		line-height: 1.2;
+		color: var(--bs-heading-color);
+	}
+
+	.texto {
+		margin-top: 0;
+		margin-bottom: .0rem;
+		line-height: 1.2;
+		color: var(--bs-heading-color);
+	}
+
+	.lista {
+		margin-top: 0;
+		margin-bottom: .0rem;
+		width: 100%;
+		line-height: 1.2;
+		color: var(--bs-heading-color);
+	}
+
+	.delete-btn {
+		position: absolute;
+		top: 5px;
+		right: 5px;
+		background: red;
+		color: white;
+		border: none;
+		cursor: pointer;
+		padding: 3px 6px;
+		font-size: 12px;
+		border-radius: 3px;
+		display: none;
+	}
+
+	.add-icons {
+		font-size: 15pt;
+	}
+
+	.row-container:hover .delete-btn,
+	.column-container:hover .delete-btn,
+	.block:hover .delete-btn {
+		display: block;
+	}
+
+	.controls {
+		margin-top: 15px;
+		display: flex;
+		flex-wrap: wrap; 
+		justify-content: center;
+		gap: 10px;
+	}
+
+	.color-picker {
+		display: flex;
+		justify-content: center;
+		gap: 5px;
+		margin-top: 10px;
+	}
+
+	.color-picker div {
+		width: 20px;
+		height: 20px;
+		border-radius: 50%;
+		flex-wrap: wrap;
+		cursor: pointer;
+		border: 2px solid #fff;
+	}
+	
+	
+	.modal-overlay {
+		display: none;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 0.7);
+		justify-content: center;
+		align-items: center;
+		z-index: 9999;
+		overflow-y: auto;
+	}
+
+	.modal-content {
+		background: #fff;
+		color: #000;
+		padding: 20px;
+		border-radius: 10px;
+		width: 90%;
+		max-width: 500px;
+		text-align: justify;
+		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+		position: relative;
+		max-height: 80vh;
+		overflow-y: auto;
+	}
+
+	.close-btn {
+		position: absolute;
+		top: 10px;
+		right: 15px;
+		font-size: 20px;
+		cursor: pointer;
+		color: red;
+	}
+	
+	@media (max-width: 600px) {
+		.modal-content {
+		width: 90%;
+		max-height: 85vh;
+		padding: 15px;
+		}
+		
+		.editor-container{
+		margin-top: 150px;
+		}
+		
+		.footer-title {
+		font-size: 14px;
+		}
+
+		.footer-logo {
+		height: 50px;
+		}
+		
+		#floating-menu {
+		top: 10px;
+		flex-wrap: wrap;
+		justify-content: center;
+		}
+
+		#floating-menu button {
+		padding: 6px;
+		}
+
+		.btn {
+		padding: 4px 4px;
+		font-size: 12px;
+		}
+	}
+	
+	p.titulo:empty::before {
+		content: "Digite o TÍTULO aqui...";
+		color: gray;
+		font-style: italic;
+		pointer-events: none;
+	}
+	
+	p.texto:empty::before {
+		content: "Digite o TEXTO aqui...";
+		color: gray;
+		font-style: italic;
+		pointer-events: none;
+	}

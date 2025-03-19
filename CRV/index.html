@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criador de Resumos Virtuais</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+	<link rel="stylesheet" href="styles.css">
+	<script src="script.js" defer></script>
+</head>
+<body>
+    <div id="floating-menu">
+		<button class="btn btn-primary" onclick="addRow()"><i class="material-icons add-icons">table_rows</i></button>
+		<button class="btn btn-secondary" onclick="addColumn()"><i class="material-icons add-icons">view_column</i></button>
+		<button class="btn btn-info" onclick="addBlock('title')"><i class="material-icons add-icons">title</i></button>
+		<button class="btn btn-success" onclick="addBlock('text')"><i class="material-icons add-icons">text_fields</i></button>
+		<button class="btn btn-warning" onclick="addBlock('list')"><i class="material-icons add-icons">format_list_bulleted</i></button>
+		<button class="btn btn-danger" onclick="addBlock('quote')"><i class="material-icons add-icons">image</i></button>
+
+		<button class="btn btn-secondary" onclick="changeFontSize(2)"><i class="material-icons add-icons">text_increase</i></button>
+		<button class="btn btn-secondary" onclick="changeFontSize(-2)"><i class="material-icons add-icons">text_decrease</i></button>
+
+		<button class="btn btn-secondary" onclick="alignText('left')"><i class="material-icons add-icons">format_align_left</i></button>
+		<button class="btn btn-secondary" onclick="alignText('center')"><i class="material-icons add-icons">format_align_center</i></button>
+		<button class="btn btn-secondary" onclick="alignText('right')"><i class="material-icons add-icons">format_align_right</i></button>
+		<button class="btn btn-secondary" onclick="alignText('justify')"><i class="material-icons add-icons">format_align_justify</i></button>
+
+		<div class="color-picker">
+			<div style="background: #0d6efd;" onclick="changeBlockColor('#0d6efd')"></div>
+			<div style="background: #6c757d;" onclick="changeBlockColor('#6c757d')"></div>
+			<div style="background: #0dcaf0;" onclick="changeBlockColor('#0dcaf0')"></div>
+			<div style="background: #ffc107;" onclick="changeBlockColor('#ffc107')"></div>
+			<div style="background: #a70e29;" onclick="changeBlockColor('#a70e29')"></div>
+			<div style="background: #ec8630;" onclick="changeBlockColor('#ec8630')"></div>
+			<div style="background: #f4b030;" onclick="changeBlockColor('#f4b030')"></div>
+			<div style="background: #acc33a;" onclick="changeBlockColor('#acc33a')"></div>
+			<div style="background: #5dc757;" onclick="changeBlockColor('#5dc757')"></div>
+			<div style="background: #2cb6a1;" onclick="changeBlockColor('#2cb6a1')"></div>
+			<div style="background: #1ea9c2;" onclick="changeBlockColor('#1ea9c2')"></div>
+		</div>
+	</div>
+
+	<div id="tutorialModal" class="modal-overlay">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeTutorial()">&times;</span>
+        <h4>Criador de Resumos Virtuais</h4>
+		
+		<p>💡 <em>O CRV - Criador de Resumos Virtuais é uma ferramenta inovadora, open source e gratuita que facilita a organização e revisão de conteúdos de estudo de forma interativa e dinâmica. Com ele, você pode vtist seus resumos de maneira rápida e eficiente, garantindo revisões periódicas e otimizadas para retenção máxima do aprendizado.</em></p>
+        
+        <p><strong>Ajustando o Layout com Linhas e Colunas</strong></p>
+        <p><i class="material-icons add-icons" style="font-size: 10pt;">table_rows</i> <b>Linhas</b>: Dividem o conteúdo horizontalmente. Cada linha pode conter várias colunas.</p>
+        <p><i class="material-icons add-icons" style="font-size: 12pt;">view_column</i> <b>Colunas</b>: Dentro de cada linha, você pode adicionar mais de uma coluna para organizar os blocos.</p>
+        <p><b>Como usar</b>: Primeiro, adicione uma linha. Depois, adicione outras colunas dentro dela e, por fim, insira os blocos de conteúdo.</p>
+
+        <hr>
+
+        <p><i class="material-icons add-icons" style="font-size: 10pt;">title</i> <strong>Adicionar um título:</strong> Clique no botão "Título" para adicionar um título editável.</p>
+        <p><i class="material-icons add-icons" style="font-size: 12pt;">text_fields</i> <strong>Adicionar um bloco de texto:</strong> Use o botão "Texto" para incluir um bloco editável.</p>
+		<p><i class="material-icons add-icons" style="font-size: 12pt;">format_list_bulleted</i> <strong>Adicionar uma lista:</strong> Use o botão "Lista" para incluir um bloco de lista.</p>
+        <p><i class="material-icons add-icons" style="font-size: 12pt;">image</i> <strong>Adicionar uma imagem:</strong> Clique no botão "Imagem", escolha um arquivo e ele será inserido no editor.</p>
+        <p><i class="material-icons add-icons" style="font-size: 12pt;">radio_button_checked</i> <strong>Alterar a cor de um bloco:</strong> Clique em um bloco e depois selecione uma cor na paleta.</p>
+        <p><i class="material-icons add-icons" style="font-size: 12pt;">text_increase</i> <strong>Ajustar tamanho do texto:</strong> Use os botões "A+" e "A-" para aumentar ou diminuir a fonte.</p>
+        <p><i class="material-icons add-icons" style="font-size: 12pt;">download_for_offline</i> <strong>Baixar como imagem:</strong> Clique no ícone de download para salvar o resumo como imagem.</p>
+        <p><i class="material-icons add-icons" style="font-size: 12pt;">close</i> <strong>Excluir um bloco:</strong> Passe o mouse sobre um bloco e clique no "X" para removê-lo.</p>
+		
+		<p><i class="material-icons add-icons" style="font-size: 12pt;">format_align_left</i> <strong>Alinhamento à esquerda:</strong> Clique no bloque de conteúdo e depois no ícone "Alinhamento à Esquerda" para ajustar o conteúdo à esquerda.</p>
+		<p><i class="material-icons add-icons" style="font-size: 12pt;">format_align_center</i> <strong>Alinhamento centralizado:</strong> Clique no bloque de conteúdo e depois no ícone "Alinhamento centralizado" para ajustar o conteúdo centralizado.</p>
+		<p><i class="material-icons add-icons" style="font-size: 12pt;">format_align_right</i> <strong>Alinhamento à direita:</strong> Clique no bloque de conteúdo e depois no ícone "Alinhamento à direita" para ajustar o conteúdo à direita.</p>
+		<p><i class="material-icons add-icons" style="font-size: 12pt;">format_align_justify</i> <strong>Alinhamento justificado:</strong> Clique no bloque de conteúdo e depois no ícone "Alinhamento justificado" para ajustar o conteúdo justificado.</p>
+
+		<p>O criador é Jef Tompson, em sua iniciativa Meu Amigo Tops (link abaixo), especificamente do projeto educacional Meu Amigo Tops Educação (link abaixo). Além do CRV, outro projeto gratuito e open source disponível é o QUIZ. Um jogo de perguntas que não depende de qualquer plataforma ou banco de dados disponível no GitHub para download (link abaixo).</p>
+		<p><i class="material-icons add-icons" style="font-size: 10pt;">smart_display</i> <a href="https://www.youtube.com/@meuamigotops" target="_blank">https://www.youtube.com/@meuamigotops</a></p>
+		<p><i class="material-icons add-icons" style="font-size: 10pt;">smart_display</i> <a href="https://www.youtube.com/@meuamigotopsedu" target="_blank">https://www.youtube.com/@meuamigotopsedu</a></p>
+		<p><i class="material-icons add-icons" style="font-size: 10pt;">smart_display</i> <a href="https://github.com/jeftompson/meuamigotopsedu" target="_blank">https://github.com/jeftompson/meuamigotopsedu</a></p>
+		
+
+    </div>
+	</div>
+
+    <div class="editor-container" id="editorContainer"></div>
+	
+	<footer class="footer-container">
+    <img src="logo-meuamigotopsedu.png" alt="Logo" class="footer-logo" />
+	<img src="logo-crv.png" alt="Logo" class="footer-logo" />
+	<button class="btn btn-light" onclick="downloadImage()"><i class="material-icons add-icons" style="color: #20c997">download_for_offline</i></button>
+		<button class="btn btn-info help-btn" onclick="openTutorial()">
+			<i class="material-icons add-icons">help_outline</i>
+		</button>
+	</footer>
+
+</body>
+</html>
