@@ -15,11 +15,8 @@
         embedded 
         renderer="logarithmicDepthBuffer: true; antialias: true;" 
         arjs="sourceType: webcam; facingMode: environment; debugUIEnabled: true;">
-        
-        <a-marker type="barcode" value="5">
-            <a-box position="0 0.5 0" material="color: red;"></a-box>
-            <a-text value="Marcador OK" position="0 1.2 0" align="center" color="#FFF" scale="2 2 2"></a-text>
-        </a-marker>
+
+        <a-marker type="pattern" url="qr-firewall.patt">
 
         <a-camera-static></a-camera-static>
     </a-scene>
