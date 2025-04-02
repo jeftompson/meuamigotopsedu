@@ -1,23 +1,29 @@
+<!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8" />
+    <title>Firewall AR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   </head>
-  <body style="margin: 0; overflow: hidden;">
+  <body style="margin: 0; overflow: hidden; background: #000;">
     <a-scene embedded vr-mode-ui="enabled: false">
-      <!-- Conteúdo diretamente no espaço 3D -->
+      
+      <!-- Texto explicativo -->
       <a-text 
-        value="Memória RAM:\nArmazenamento temporário e rápido." 
-        position="0 1.5 -3" 
-        color="yellow" 
+        value="FIREWALL\nProteção contra ameaças de rede" 
+        position="0 2 -4" 
+        color="orange" 
         align="center" 
         scale="2 2 2">
       </a-text>
 
+      <!-- GIF animado de firewall -->
       <a-image 
-        src="https://media.tenor.com/3eMmzWhNdywAAAAC/ram-memory.gif" 
-        position="0 1 -3" 
-        width="2" 
-        height="1">
+        src="https://media.tenor.com/8DCI1xM4b-4AAAAd/firewall-security.gif" 
+        position="0 1 -4" 
+        width="3" 
+        height="1.5">
       </a-image>
 
       <a-camera position="0 0 0"></a-camera>
