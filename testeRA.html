@@ -3,30 +3,33 @@
   <head>
     <meta charset="utf-8" />
     <title>Firewall AR</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ar.js@3.4.2/aframe/build/aframe-ar-nft.min.js"></script>
   </head>
-  <body style="margin: 0; overflow: hidden; background: #000;">
-    <a-scene embedded vr-mode-ui="enabled: false">
+  <body style="margin: 0; overflow: hidden;">
+    <a-scene 
+      vr-mode-ui="enabled: false" 
+      embedded 
+      arjs="sourceType: webcam; debugUIEnabled: false;">
       
-      <!-- Texto explicativo -->
+      <!-- Texto flutuando no espaço -->
       <a-text 
-        value="FIREWALL\nProteção contra ameaças de rede" 
-        position="0 2 -4" 
-        color="orange" 
-        align="center" 
-        scale="2 2 2">
+        value="FIREWALL\nProteção contra ameaças de rede"
+        position="0 0.5 0"
+        scale="2 2 2"
+        align="center"
+        color="orange">
       </a-text>
 
-      <!-- GIF animado de firewall -->
+      <!-- GIF animado -->
       <a-image 
-        src="https://media.tenor.com/8DCI1xM4b-4AAAAd/firewall-security.gif" 
-        position="0 1 -4" 
-        width="3" 
+        src="https://media.tenor.com/8DCI1xM4b-4AAAAd/firewall-security.gif"
+        position="0 0 0"
+        width="3"
         height="1.5">
       </a-image>
 
-      <a-camera position="0 0 0"></a-camera>
+      <a-entity camera></a-entity>
     </a-scene>
   </body>
 </html>
