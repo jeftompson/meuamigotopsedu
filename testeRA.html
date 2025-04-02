@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Firewall AR</title>
+    <title>Teste RA com QR Code</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ar.js@3.4.2/aframe/build/aframe-ar.min.js"></script>
   </head>
@@ -13,11 +13,11 @@
       vr-mode-ui="enabled: false"
       renderer="logarithmicDepthBuffer: true;">
       
-      <!-- Conteúdo em AR (sem marcador) -->
-      <a-entity position="0 0 0">
+      <!-- Reconhecimento do marcador baseado no QR -->
+      <a-marker type="pattern" url="qr-firewall.patt">
         <a-text 
           value="FIREWALL\nProteção contra ameaças de rede"
-          position="0 1.2 -3"
+          position="0 1 0"
           align="center"
           color="orange"
           scale="2 2 2">
@@ -25,11 +25,11 @@
 
         <a-image 
           src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExOWQ3Mzl6MmU5enUxcHB0OTVheDg2NmpjYThrMmowamM2aDJjdjRicSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/arGdCUFTYzs2c/giphy.gif"
-          position="0 0 -3"
+          position="0 0 0"
           width="3"
           height="1.5">
         </a-image>
-      </a-entity>
+      </a-marker>
 
       <a-entity camera></a-entity>
     </a-scene>
