@@ -2,8 +2,8 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>AR.js - GIF no Marcador QR Code</title>
-    <meta name="description" content="Exibe um GIF quando um QR Code específico é detectado">
+    <title>AR.js - GIF no Marcador QR Code (Ajuste de Câmera)</title>
+    <meta name="description" content="Exibe um GIF quando um QR Code específico é detectado - Tentativa de corrigir zoom">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
@@ -12,42 +12,52 @@
 
     <style>
         body { margin: 0; overflow: hidden; }
+
+        /* --- TENTATIVA DE CORRIGIR O ZOOM DA CÂMERA --- */
+        /* Força o vídeo da câmera a cobrir a área, mantendo a proporção */
+        /* Isto pode ajudar a ajustar visualmente o feed da câmera */
+        video {
+            object-fit: cover !important; /* Tenta cobrir a área sem distorcer */
+            width: 100% !important;
+            height: 100% !important;
+            position: absolute !important; /* Garante que cubra a tela */
+            top: 0 !important;
+            left: 0 !important;
+            z-index: -1 !important; /* Coloca o vídeo atrás do conteúdo A-Frame */
+        }
+        /* Garante que a cena A-Frame ocupe o espaço corretamente */
+        a-scene {
+             position: absolute !important;
+             top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+             /* Garante que a cena seja transparente para ver o vídeo atrás */
+             background: transparent !important;
+        }
+         /* --- FIM DA TENTATIVA DE CORREÇÃO --- */
     </style>
 </head>
 <body>
     <a-scene
         embedded
         arjs="sourceType: webcam; debugUIEnabled: true; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
-        renderer="logarithmicDepthBuffer: true;">
-
-        <a-marker type="barcode" value="https://jeftompson.github.io">
+        renderer="logarithmicDepthBuffer: true; colorManagement: true; physicallyCorrectLights: true;">
+         <a-marker type="barcode" value="https://jeftompson.github.io">
 
             <a-plane
-                width="1.2"                Annulated Width (adjust as needed)
-                height="1.2"              Annulated Height (adjust as needed)
-                position="0 0.5 0"        Annulated Position (slightly above marker center)
-                rotation="-90 0 0"       Annulated Rotation (flat on the marker)
-                material="shader: gif; src: url(https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbDY4a21oMXV5aXhkcmQ5eGJmeHY4MmkxdnlqdzQ3bGFkYmMyZ25jaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3oEjI6SIIHBdRxXI40/giphy.gif); transparent: true; opacity: 0.95;" /* Example GIF, REPLACE a URL! */>
+                width="1.2" height="1.2"
+                position="0 0.5 0"
+                rotation="-90 0 0"
+                material="shader: gif; src: url(https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbDY4a21oMXV5aXhkcmQ5eGJmeHY4MmkxdnlqdzQ3bGFkYmMyZ25jaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3oEjI6SIIHBdRxXI40/giphy.gif); transparent: true; opacity: 0.95;">
             </a-plane>
 
             <a-text
-                value="QR Code Detectado!"
-                align="center"
-                color="#FFFFFF"
-                width="2.5"
-                position="0 1.2 0"        Annulated Position (above the GIF)
-                rotation="-90 0 0"       Annulated Rotation (flat)
-                side="double"             Annulated Ensures text is visible from both sides
-                negate="false">           Annulated Ensures correct orientation
-                 <a-plane
-                     width="2.6" height="0.5" color="black" opacity="0.5" position="0 0 -0.01">
-                 </a-plane>
+                value="QR Code Detectado!" align="center" color="#FFFFFF" width="2.5"
+                position="0 1.2 0" rotation="-90 0 0" side="double" negate="false">
+                 <a-plane width="2.6" height="0.5" color="black" opacity="0.5" position="0 0 -0.01"></a-plane>
             </a-text>
 
         </a-marker>
 
         <a-entity camera></a-entity>
-
     </a-scene>
 </body>
 </html>
