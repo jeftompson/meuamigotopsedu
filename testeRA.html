@@ -2,133 +2,52 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Visualizador AR da Aula</title>
-    <meta name="description" content="Exibe conteúdo AR acionado por QR Code da aula no YouTube">
+    <title>AR.js - GIF no Marcador QR Code</title>
+    <meta name="description" content="Exibe um GIF quando um QR Code específico é detectado">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-
     <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.6/aframe/build/aframe-ar.js"></script>
-
     <script src="https://unpkg.com/aframe-gif-shader/dist/aframe-gif-shader.min.js"></script>
 
     <style>
-        /* Remove margens para ocupar tela toda */
         body { margin: 0; overflow: hidden; }
-
-        /* Estilo para um botão de fechar simples (opcional) */
-        #closeButton {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            z-index: 10000; /* Garante que fique acima da cena AR */
-            padding: 10px 15px;
-            background-color: rgba(0, 0, 0, 0.6);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            font-family: sans-serif;
-        }
     </style>
 </head>
 <body>
-    <button id="closeButton" onclick="window.close(); history.back();">Fechar</button>
+    <a-scene
+        embedded
+        arjs="sourceType: webcam; debugUIEnabled: true; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
+        renderer="logarithmicDepthBuffer: true;">
 
-    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;">
-        <a-entity id="content-holder" position="0 0 -1.5">
-            </a-entity>
+        <a-marker type="barcode" value="https://jeftompson.github.io">
+
+            <a-plane
+                width="1.2"                Annulated Width (adjust as needed)
+                height="1.2"              Annulated Height (adjust as needed)
+                position="0 0.5 0"        Annulated Position (slightly above marker center)
+                rotation="-90 0 0"       Annulated Rotation (flat on the marker)
+                material="shader: gif; src: url(https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbDY4a21oMXV5aXhkcmQ5eGJmeHY4MmkxdnlqdzQ3bGFkYmMyZ25jaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3oEjI6SIIHBdRxXI40/giphy.gif); transparent: true; opacity: 0.95;" /* Example GIF, REPLACE a URL! */>
+            </a-plane>
+
+            <a-text
+                value="QR Code Detectado!"
+                align="center"
+                color="#FFFFFF"
+                width="2.5"
+                position="0 1.2 0"        Annulated Position (above the GIF)
+                rotation="-90 0 0"       Annulated Rotation (flat)
+                side="double"             Annulated Ensures text is visible from both sides
+                negate="false">           Annulated Ensures correct orientation
+                 <a-plane
+                     width="2.6" height="0.5" color="black" opacity="0.5" position="0 0 -0.01">
+                 </a-plane>
+            </a-text>
+
+        </a-marker>
 
         <a-entity camera></a-entity>
+
     </a-scene>
-
-    <script>
-        window.onload = () => {
-            // Pega os parâmetros da URL (ex: ?tipo=imagem&src=formula.png)
-            const urlParams = new URLSearchParams(window.location.search);
-
-            const tipo = urlParams.get('tipo'); // 'imagem', 'gif', 'texto', 'formula'
-            const src = urlParams.get('src');   // URL da imagem/gif
-            const valor = urlParams.get('valor'); // Texto a ser exibido (precisa ser codificado na URL)
-            const largura = parseFloat(urlParams.get('w') || 1); // Largura (padrão 1 metro)
-            const altura = parseFloat(urlParams.get('h') || 1);  // Altura (padrão 1 metro)
-            const escala = parseFloat(urlParams.get('s') || 1);  // Escala geral (padrão 1)
-
-            const container = document.getElementById('content-holder');
-            let elementoAR;
-
-            console.log(`Tipo: ${tipo}, Src: ${src}, Valor: ${valor}, L: ${largura}, A: ${altura}, S: ${escala}`);
-
-            switch (tipo) {
-                case 'imagem':
-                case 'formula': // Tratar fórmulas como imagens
-                    elementoAR = document.createElement('a-image');
-                    elementoAR.setAttribute('src', src);
-                    elementoAR.setAttribute('width', largura);
-                    elementoAR.setAttribute('height', altura);
-                    elementoAR.setAttribute('scale', `${escala} ${escala} ${escala}`);
-                    // Adiciona um fundo branco semi-transparente para melhor visualização da imagem
-                    let imgBackground = document.createElement('a-plane');
-                    imgBackground.setAttribute('width', largura * 1.05 * escala); // Um pouco maior
-                    imgBackground.setAttribute('height', altura * 1.05 * escala);
-                    imgBackground.setAttribute('color', 'white');
-                    imgBackground.setAttribute('opacity', '0.85');
-                    imgBackground.setAttribute('position', '0 0 -0.01'); // Ligeiramente atrás da imagem
-                    container.appendChild(imgBackground);
-                    break;
-
-                case 'gif':
-                    elementoAR = document.createElement('a-plane'); // GIFs animados usam a-plane + shader
-                    elementoAR.setAttribute('width', largura);
-                    elementoAR.setAttribute('height', altura);
-                    // Aplica o shader de GIF usando a URL fornecida
-                    elementoAR.setAttribute('material', `shader: gif; src: url(${src}); transparent: true;`);
-                    elementoAR.setAttribute('scale', `${escala} ${escala} ${escala}`);
-                    break;
-
-                case 'texto':
-                    elementoAR = document.createElement('a-text');
-                    // Decodifica o texto da URL (ex: espaços viram %20)
-                    elementoAR.setAttribute('value', valor ? decodeURIComponent(valor) : 'Conteúdo não fornecido.');
-                    elementoAR.setAttribute('align', 'center');
-                    elementoAR.setAttribute('color', 'white');
-                    elementoAR.setAttribute('width', largura * 2); // a-text usa 'width' de forma diferente
-                    elementoAR.setAttribute('wrap-count', largura * 15); // Ajusta quebra de linha
-                    elementoAR.setAttribute('baseline', 'top'); // Alinha texto pelo topo
-                    elementoAR.setAttribute('position', `0 ${altura/2 * escala} 0.01`); // Centraliza e posiciona
-                    elementoAR.setAttribute('scale', `${escala} ${escala} ${escala}`);
-
-                    // Adiciona um fundo escuro para legibilidade do texto
-                    let txtBackground = document.createElement('a-plane');
-                    // Calcula tamanho do fundo baseado no texto (aproximação)
-                    let numChars = (valor || '').length;
-                    let bgHeight = Math.max(altura, numChars / (largura * 15) * 0.15) * escala; // Estimativa de altura
-                    txtBackground.setAttribute('width', largura * 2.1 * escala); // Um pouco mais largo
-                    txtBackground.setAttribute('height', bgHeight * 1.1); // Um pouco mais alto
-                    txtBackground.setAttribute('color', 'black');
-                    txtBackground.setAttribute('opacity', '0.7');
-                    txtBackground.setAttribute('position', `0 ${altura/2 * escala} 0`); // Atrás do texto
-                    container.appendChild(txtBackground);
-                    break;
-
-                // Pode adicionar mais tipos aqui (ex: modelo 3D)
-
-                default:
-                    elementoAR = document.createElement('a-text');
-                    elementoAR.setAttribute('value', 'Tipo de conteudo desconhecido.');
-                    elementoAR.setAttribute('align', 'center');
-                    elementoAR.setAttribute('color', 'red');
-                    elementoAR.setAttribute('width', 4);
-            }
-
-            if (elementoAR) {
-                container.appendChild(elementoAR);
-                console.log('Elemento AR adicionado:', elementoAR);
-            } else {
-                 console.error('Não foi possível criar o elemento AR.');
-            }
-        };
-    </script>
 </body>
 </html>
