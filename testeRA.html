@@ -4,30 +4,32 @@
     <meta charset="utf-8" />
     <title>Firewall AR</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/ar.js@3.4.2/aframe/build/aframe-ar-nft.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ar.js@3.4.2/aframe/build/aframe-ar.min.js"></script>
   </head>
   <body style="margin: 0; overflow: hidden;">
-    <a-scene 
-      vr-mode-ui="enabled: false" 
-      embedded 
-      arjs="sourceType: webcam; debugUIEnabled: false;">
+    <a-scene
+      embedded
+      arjs="sourceType: webcam; debugUIEnabled: false;"
+      vr-mode-ui="enabled: false"
+      renderer="logarithmicDepthBuffer: true;">
       
-      <!-- Texto flutuando no espaço -->
-      <a-text 
-        value="FIREWALL\nProteção contra ameaças de rede"
-        position="0 0.5 0"
-        scale="2 2 2"
-        align="center"
-        color="orange">
-      </a-text>
+      <!-- Conteúdo em AR (sem marcador) -->
+      <a-entity position="0 0 0">
+        <a-text 
+          value="FIREWALL\nProteção contra ameaças de rede"
+          position="0 1.2 -3"
+          align="center"
+          color="orange"
+          scale="2 2 2">
+        </a-text>
 
-      <!-- GIF animado -->
-      <a-image 
-        src="https://media.tenor.com/8DCI1xM4b-4AAAAd/firewall-security.gif"
-        position="0 0 0"
-        width="3"
-        height="1.5">
-      </a-image>
+        <a-image 
+          src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExOWQ3Mzl6MmU5enUxcHB0OTVheDg2NmpjYThrMmowamM2aDJjdjRicSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/arGdCUFTYzs2c/giphy.gif"
+          position="0 0 -3"
+          width="3"
+          height="1.5">
+        </a-image>
+      </a-entity>
 
       <a-entity camera></a-entity>
     </a-scene>
